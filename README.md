@@ -1,7 +1,7 @@
 # powerbi_api_refresh
 Attempt at building incremental refresh using the PowerBI API.
 
-This application connectes to a database, builds a JSON set of rows and pushes them 10000 rows at at time to the Power BI API.
+This application connects to a database, builds a JSON set of rows and pushes them 10000 rows at at time to the Power BI API.
 
 Currently, the API does not allow row additions to datasets created with a database connection. The dataset must be created with the Power BI API to use the AddRows functionality.
 
