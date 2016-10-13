@@ -26,15 +26,19 @@ namespace PBIIncrementalLoadingTest
             //Add using Microsoft.IdentityModel.Clients.ActiveDirectory
 
             dataset[] datasets = self.GetDatasets();
+            foreach (dataset d in datasets)
+            {
+                Console.WriteLine(d.Name);
+            }
             string datasetID = (from d in datasets where d.Name == "Orders" select d).FirstOrDefault().Id;
 
             //The client id that Azure AD created when you registered your client app.
-            string clientID = "Enter your Power BI Application client ID here";
+            string clientID = "204e31d2-1668-4775-98d1-80ed24588aed";
 
             //RedirectURI you used when you registered your app.
             //For a client app, a redirect uri gives Azure AD more details on the application that it will authenticate.
             //You can use this redirect url for your client app
-            string redirectUri = "http://www.powerbi.com";
+            string redirectUri = "https://www.blue-granite.com";
 
             //Resource Uri for Power BI API
             string resourceUri = "https://analysis.windows.net/powerbi/api";
@@ -63,52 +67,52 @@ namespace PBIIncrementalLoadingTest
 
             Console.WriteLine(datasetID);
             Console.ReadLine();
-            self.GetIncrementalData();
+            //self.GetIncrementalData();
 
-            if (self.dsIncrementalData.Tables[0].Rows.Count > 0)
-            {
-                int batchCount = (int)Math.Ceiling((double)self.dsIncrementalData.Tables[0].Rows.Count / 10000);
-                self.JSONData = new StringBuilder[batchCount];
-                self.BuildJSONString(self, batchCount, self.dsIncrementalData.Tables[0].Columns.Count);
+            //if (self.dsIncrementalData.Tables[0].Rows.Count > 0)
+            //{
+            //    int batchCount = (int)Math.Ceiling((double)self.dsIncrementalData.Tables[0].Rows.Count / 10000);
+            //    self.JSONData = new StringBuilder[batchCount];
+            //    self.BuildJSONString(self, batchCount, self.dsIncrementalData.Tables[0].Columns.Count);
 
-                Console.WriteLine("There are " + self.JSONData.Count() + " items to send to Power BI in the JSON array");
-                Console.ReadLine();
-                foreach (StringBuilder s in self.JSONData)
-                {
-                    Console.WriteLine("---------------------------------------------");
-                    Console.WriteLine(s);
-                    Console.WriteLine("---------------------------------------------");
-                }
+            //    Console.WriteLine("There are " + self.JSONData.Count() + " items to send to Power BI in the JSON array");
+            //    Console.ReadLine();
+            //    foreach (StringBuilder s in self.JSONData)
+            //    {
+            //        Console.WriteLine("---------------------------------------------");
+            //        Console.WriteLine(s);
+            //        Console.WriteLine("---------------------------------------------");
+            //    }
 
-                //start pushing rows to PowerBI
-                HttpWebRequest request = System.Net.WebRequest.Create(powerBIApiURl) as System.Net.HttpWebRequest;
-                request.KeepAlive = true;
-                request.Method = "POST";
-                request.ContentLength = 0;
-                request.ContentType = "application/json";
-                request.Headers.Add("Authorization", String.Format("Bearer {0}", token));
+            //    //start pushing rows to PowerBI
+            //    HttpWebRequest request = System.Net.WebRequest.Create(powerBIApiURl) as System.Net.HttpWebRequest;
+            //    request.KeepAlive = true;
+            //    request.Method = "POST";
+            //    request.ContentLength = 0;
+            //    request.ContentType = "application/json";
+            //    request.Headers.Add("Authorization", String.Format("Bearer {0}", token));
 
-                Console.WriteLine(token);
-                Console.ReadLine();
+            //    Console.WriteLine(token);
+            //    Console.ReadLine();
 
-                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(self.JSONData[0].ToString());
-                request.ContentLength = byteArray.Length;
+            //    byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(self.JSONData[0].ToString());
+            //    request.ContentLength = byteArray.Length;
 
-                Console.WriteLine(request.GetRequestStream());
-                Console.ReadLine();
+            //    Console.WriteLine(request.GetRequestStream());
+            //    Console.ReadLine();
 
-                using (Stream writer = request.GetRequestStream())
-                {
-                    writer.Write(byteArray, 0, byteArray.Length);
+            //    using (Stream writer = request.GetRequestStream())
+            //    {
+            //        writer.Write(byteArray, 0, byteArray.Length);
 
-                    var response = (HttpWebResponse)request.GetResponse();
-                    Console.WriteLine(response.ToString());
-                }
-            }
-            else //nothing to do
-            {
+            //        var response = (HttpWebResponse)request.GetResponse();
+            //        Console.WriteLine(response.ToString());
+            //    }
+            //}
+            //else //nothing to do
+            //{
 
-            }
+            //}
 
             //Console.WriteLine(self.dsIncrementalData.Tables[0].Rows.Count);
             Console.ReadLine();
@@ -121,12 +125,12 @@ namespace PBIIncrementalLoadingTest
 
             //The client id that Azure AD creates when you register your client app.
             //  To learn how to register a client app, see https://msdn.microsoft.com/en-US/library/dn877542(Azure.100).aspx         
-            string clientID = "Enter your Power BI Application Client ID here";
+            string clientID = "204e31d2-1668-4775-98d1-80ed24588aed";
 
             //RedirectUri you used when you register your app.
             //For a client app, a redirect uri gives Azure AD more details on the application that it will authenticate.
             // You can use this redirect uri for your client app
-            string redirectUri = "http://www.blue-granite.com";
+            string redirectUri = "https://www.blue-granite.com";
 
             //Resource Uri for Power BI API
             string resourceUri = "https://analysis.windows.net/powerbi/api";
