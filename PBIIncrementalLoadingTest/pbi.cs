@@ -30,7 +30,7 @@ namespace PBIIncrementalLoadingTest
             {
                 Console.WriteLine(d.Name);
             }
-            string datasetID = (from d in datasets where d.Name == "Orders" select d).FirstOrDefault().Id;
+            string datasetID = (from d in datasets where d.Name == "Big Data Meme Vote Results" select d).FirstOrDefault().Id;
 
             //The client id that Azure AD created when you registered your client app.
             string clientID = "204e31d2-1668-4775-98d1-80ed24588aed";
@@ -46,7 +46,7 @@ namespace PBIIncrementalLoadingTest
             //OAuth2 authority Uri
             string authorityUri = "https://login.windows.net/common/oauth2/authorize";
 
-            string tableName = "Orders";
+            string tableName = "MemeVoteResults";
             string powerBIApiURl = String.Format("https://api.powerbi.com/v1.0/myorg/datasets/{0}/tables/{1}/rows", datasetID, tableName);
 
             //Get access token:
@@ -69,6 +69,8 @@ namespace PBIIncrementalLoadingTest
             Console.ReadLine();
             //self.GetIncrementalData();
 
+            string sampleRow = "{\"rows\":[{\"memeID\":111,\"voteValue\":1},{\"memeID\":222,\"voteValue\":1},{\"memeID\":333,\"voteValue\":1}]}";
+
             //if (self.dsIncrementalData.Tables[0].Rows.Count > 0)
             //{
             //    int batchCount = (int)Math.Ceiling((double)self.dsIncrementalData.Tables[0].Rows.Count / 10000);
@@ -79,35 +81,51 @@ namespace PBIIncrementalLoadingTest
             //    Console.ReadLine();
             //    foreach (StringBuilder s in self.JSONData)
             //    {
-            //        Console.WriteLine("---------------------------------------------");
-            //        Console.WriteLine(s);
-            //        Console.WriteLine("---------------------------------------------");
+                    Console.WriteLine("-------------ROWS TO BE WRITTEN--------------------------------");
+                    Console.WriteLine(sampleRow);
+                    Console.WriteLine("---------------------------------------------------------------");
             //    }
 
-            //    //start pushing rows to PowerBI
-            //    HttpWebRequest request = System.Net.WebRequest.Create(powerBIApiURl) as System.Net.HttpWebRequest;
-            //    request.KeepAlive = true;
-            //    request.Method = "POST";
-            //    request.ContentLength = 0;
-            //    request.ContentType = "application/json";
-            //    request.Headers.Add("Authorization", String.Format("Bearer {0}", token));
+            //start pushing rows to PowerBI
+            HttpWebRequest request = System.Net.WebRequest.Create(powerBIApiURl) as System.Net.HttpWebRequest;
+            request.KeepAlive = true;
+            request.Method = "POST";
+            request.ContentLength = 0;
+            request.ContentType = "application/json";
+            request.Headers.Add("Authorization", String.Format("Bearer {0}", token));
 
-            //    Console.WriteLine(token);
-            //    Console.ReadLine();
+            Console.WriteLine(token);
+            Console.ReadLine();
 
-            //    byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(self.JSONData[0].ToString());
-            //    request.ContentLength = byteArray.Length;
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine(request.ToString());
+            Console.WriteLine("---------------------------------------------------------------");
 
-            //    Console.WriteLine(request.GetRequestStream());
-            //    Console.ReadLine();
+            byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(sampleRow);
+            request.ContentLength = byteArray.Length;
 
-            //    using (Stream writer = request.GetRequestStream())
-            //    {
-            //        writer.Write(byteArray, 0, byteArray.Length);
+            Console.WriteLine(request.GetRequestStream());
+            Console.ReadLine();
 
-            //        var response = (HttpWebResponse)request.GetResponse();
-            //        Console.WriteLine(response.ToString());
-            //    }
+            using (Stream writer = request.GetRequestStream())
+            {
+                writer.Write(byteArray, 0, byteArray.Length);
+
+                HttpWebResponse response = null;
+
+                try
+                {
+                   response = (HttpWebResponse)request.GetResponse();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    Console.WriteLine(response.ToString());
+                }
+            }
             //}
             //else //nothing to do
             //{
@@ -194,7 +212,7 @@ namespace PBIIncrementalLoadingTest
         {
             //int i = 0;
             int maxBatchSize = 9999;
-            
+            //{"rows":[{"memeID":111,"voteValue":1},{"memeID":222,"voteValue":1},{"memeID":333,"voteValue":1}]}
             for (int a = 0; a < self.JSONData.Count(); a++) //loop through each batch and build a JSON string to pop to the array
             {
                 StringBuilder JSONRows = new StringBuilder(); //initialize a new StringBuilder for the batch
